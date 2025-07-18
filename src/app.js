@@ -30,7 +30,9 @@ const app = express();
 const corsOptions = {
   origin: [
     "http://localhost:3000",
-    "https://fe-anasiriin.vercel.app", 
+    "https://fe-anasiriin.vercel.app",
+    
+    
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -42,18 +44,24 @@ app.use(cors(corsOptions));
 
 // Additional CORS headers for preflight requests
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://fe-anasiriin.vercel.app','http://localhost:3000');
+  const allowedOrigins = ['http://localhost:3000', 'https://fe-anasiriin.vercel.app'];
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
-  
-  // Handle preflight requests
+
   if (req.method === 'OPTIONS') {
     res.sendStatus(200);
   } else {
     next();
   }
 });
+
 
 // Middleware untuk parsing JSON
 app.use(express.json()); // Pastikan middleware ini ada
