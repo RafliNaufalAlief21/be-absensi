@@ -30,9 +30,7 @@ const app = express();
 const corsOptions = {
   origin: [
     "http://localhost:3000",
-    "https://fe-anasiriin.vercel.app",
-    "https://0240-180-244-90-22.ngrok-free.app",
-    "https://be-anasiriin.matrakosala.com"
+    "https://fe-anasiriin.vercel.app", 
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -44,7 +42,7 @@ app.use(cors(corsOptions));
 
 // Additional CORS headers for preflight requests
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://fe-anasiriin.vercel.app');
+  res.header('Access-Control-Allow-Origin', 'https://fe-anasiriin.vercel.app','http://localhost:3000');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
