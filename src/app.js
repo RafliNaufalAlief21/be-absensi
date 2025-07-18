@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv"; // Import dotenv to load environment variables
+import dotenv from "dotenv"; 
 
 import authRoutes from "./routes/authRoutes.js";
 import absensiRoutes from "./routes/absensiRoutes.js"; // Import absensi routes
