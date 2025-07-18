@@ -10,6 +10,8 @@ import {
 } from "../utils/dateTimeUtils.js";
 import nodeCron from "node-cron";
 
+let isProcessingAbsensi = false; // ⚠️ penting untuk mencegah dobel proses
+
 export function determineAttendanceStatus(jam_mulai, waktu_masuk) {
   try {
     if (waktu_masuk <= jam_mulai) {
@@ -1170,7 +1172,21 @@ export async function getAbsensiByJadwalId(jadwal_id) {
   }
 }
 
-// Jadwalkan cron job untuk menjalankan absensi otomatis setiap menit
-nodeCron.schedule("* * * * *", () => {
-  processAutomaticAbsensi();
+// ⏰ Cron tiap menit
+nodeCron.schedule("* * * * *", async () => {
+  if (isProcessingAbsensi) {
+    console.log("⚠️ Proses absensi sedang berjalan, skip eksekusi berikutnya.");
+    return;
+  }
+  isProcessingAbsensi = true;
+  console.log("🟢 Menjalankan absensi otomatis...");
+
+  try {
+    await processAutomaticAbsensi();
+  } catch (err) {
+    console.error("❌ Error absensi otomatis:", err.message);
+  } finally {
+    isProcessingAbsensi = false;
+    console.log("✅ Absensi otomatis selesai.");
+  }
 });
