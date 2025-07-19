@@ -198,11 +198,11 @@ export async function scanBarcode(barcode, type, jadwal_id, status = "Hadir") {
           const fallbackRecord = allTodayRecords[0];
           console.log("Menggunakan record fallback:", fallbackRecord.toJSON());
 
-          // Extract just the time part (HH:MM:SS) from the current time string
-          const timeOnly = currentTime.split(" ")[1];
+          // Ambil jam_selesai dari jadwal
+          const waktuKeluar = jadwal.jam_selesai;
 
           await fallbackRecord.update({
-            waktu_keluar: timeOnly,
+            waktu_keluar: waktuKeluar,
             updated_at: currentTime,
           });
 
@@ -228,12 +228,12 @@ export async function scanBarcode(barcode, type, jadwal_id, status = "Hadir") {
         };
       }
 
-      // Extract just the time part (HH:MM:SS) from the current time string
-      const timeOnly = currentTime.split(" ")[1];
+      // Ambil jam_selesai dari jadwal
+      const waktuKeluar = jadwal.jam_selesai;
 
       // Update record yang ada
       await existingRecord.update({
-        waktu_keluar: timeOnly,
+        waktu_keluar: waktuKeluar,
         updated_at: currentTime,
       });
 
