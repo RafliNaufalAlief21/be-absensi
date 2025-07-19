@@ -12,11 +12,8 @@ export async function createSiswa(data, file, baseUrl) {
       throw new Error("NIS, Nama Siswa, dan Kelas ID wajib diisi");
     }
 
-    // Tambahkan barcode_id dari nis
-    data.barcode_id = data.nis;
-
-    // Generate QR code dari barcode_id
-    data.qr_code = await QRCode.toDataURL(data.barcode_id);
+    // Generate QR code dari nis
+    data.qr_code = await QRCode.toDataURL(data.nis);
 
     // Tambahkan URL lengkap foto jika ada file yang diunggah
     if (file) {
@@ -33,7 +30,6 @@ export async function createSiswa(data, file, baseUrl) {
       agama: data.agama,
       alamat: data.alamat,
       foto: data.foto, // Simpan URL lengkap foto
-      barcode_id: data.barcode_id,
       qr_code: data.qr_code,
     });
 

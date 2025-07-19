@@ -27,7 +27,7 @@ export function determineAttendanceStatus(jam_mulai, waktu_masuk) {
 
 export async function scanBarcode(barcode, type, jadwal_id, status = "Hadir") {
   try {
-    const siswa = await Siswa.findOne({ where: { barcode_id: barcode } });
+    const siswa = await Siswa.findOne({ where: { nis: barcode } });
 
     if (!siswa) {
       return {
