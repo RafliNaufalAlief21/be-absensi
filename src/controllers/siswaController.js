@@ -61,7 +61,7 @@ export const createSiswa = async (req, res) => {
     console.log("Headers:", req.headers);
     
     const file = req.file; // Ambil file yang diunggah
-    
+    const baseUrl = req.protocol + '://' + req.get('host');
     // Validate required fields
     const requiredFields = ['nis', 'nama_siswa', 'kelas_id', 'jenis_kelamin'];
     for (const field of requiredFields) {
@@ -73,7 +73,7 @@ export const createSiswa = async (req, res) => {
       }
     }
     
-    const siswa = await siswaService.createSiswa(req.body, file);
+    const siswa = await siswaService.createSiswa(req.body, file, baseUrl);
 
     res.status(201).json({
       success: true,
@@ -114,11 +114,11 @@ export const updateSiswa = async (req, res) => {
     const { id } = req.params;
     const siswaData = req.body;
     const file = req.file; // Ambil file yang diunggah jika ada
-
+    const baseUrl = req.protocol + '://' + req.get('host');
     // Debugging: Log data yang diterima
     console.log("Data received for updateSiswa:", siswaData);
 
-    const result = await siswaService.updateSiswa(id, siswaData, file);
+    const result = await siswaService.updateSiswa(id, siswaData, file, baseUrl);
 
     // Periksa apakah siswa ditemukan berdasarkan ID
     if (!result) {

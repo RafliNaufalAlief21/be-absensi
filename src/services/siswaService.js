@@ -5,7 +5,7 @@ import MataPelajaran from "../models/MataPelajaran.js";
 import Guru from "../models/Guru.js";
 import QRCode from "qrcode";
 
-export async function createSiswa(data, file) {
+export async function createSiswa(data, file, baseUrl) {
   try {
     // Validasi data sebelum membuat siswa
     if (!data.nis || !data.nama_siswa || !data.kelas_id) {
@@ -20,7 +20,6 @@ export async function createSiswa(data, file) {
 
     // Tambahkan URL lengkap foto jika ada file yang diunggah
     if (file) {
-      const baseUrl = process.env.API_BASE_URL || "http://localhost:5000";
       data.foto = `${baseUrl}/uploads/${file.filename}`; // Simpan URL lengkap
     }
     // Buat data siswa
@@ -105,7 +104,7 @@ export async function getSiswaByUserId(userId) {
   return await Siswa.findOne({ where: { user_id: userId } });
 }
 
-export async function updateSiswa(id, siswaData, file) {
+export async function updateSiswa(id, siswaData, file, baseUrl) {
   try {
     console.log("Data received in service:", siswaData);
 
@@ -117,7 +116,6 @@ export async function updateSiswa(id, siswaData, file) {
 
     // Jika ada file foto baru, tambahkan ke data siswa
     if (file) {
-      const baseUrl = process.env.API_BASE_URL || "http://localhost:5000";
       siswaData.foto = `${baseUrl}/uploads/${file.filename}`;
     }
 
