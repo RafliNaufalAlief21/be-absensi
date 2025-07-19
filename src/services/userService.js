@@ -121,7 +121,7 @@ export async function getUsersByUserLevel(user_level_id) {
       {
         model: UserLevel,
         as: "userLevel",
-        attributes: ["id", "nama_level", ],
+        attributes: ["id", "nama_level"],
       },
     ],
     attributes: ["id", "username", "nama_lengkap", "email", "no_telepon"],
