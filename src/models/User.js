@@ -14,7 +14,7 @@ const User = sequelize.define(
       allowNull: false,
       unique: {
         name: "unique_username",
-        msg: "Username sudah digunakan", // Pesan error jika username duplikat
+        msg: "NIP sudah digunakan", // Pesan error jika username duplikat
       },
       validate: {
         notEmpty: {

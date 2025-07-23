@@ -57,8 +57,8 @@ export async function createGuru(data) {
         console.error("Error: NIP sudah digunakan");
         throw new Error("NIP sudah digunakan");
       } else if (field === "username") {
-        console.error("Error: Username sudah digunakan");
-        throw new Error("Username sudah digunakan");
+        console.error("Error: NIP sudah digunakan");
+        throw new Error("NIP sudah digunakan");
       }
     }
     console.error("Error in createGuru:", error.message);
