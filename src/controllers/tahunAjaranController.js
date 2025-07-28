@@ -27,6 +27,7 @@ export const getAllTahunAjaran = async (req, res) => {
     const tahunAjaranList = await tahunAjaranService.getAllTahunAjaran(
       TahunAjaran
     );
+    console.log("TahunAjaran List from DB:", tahunAjaranList); // Debug logging
     return res.status(200).json({
       success: true,
       data: tahunAjaranList,

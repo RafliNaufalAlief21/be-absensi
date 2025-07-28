@@ -8,9 +8,40 @@ export async function createTahunAjaran(tahunAjaranModel, tahunAjaranData) {
 
 export async function getAllTahunAjaran(tahunAjaranModel) {
   try {
-    return await tahunAjaranModel.findAll({
+    // Use raw query to get distinct values
+    const { Sequelize } = await import('sequelize');
+    const result = await tahunAjaranModel.findAll({
+      attributes: [
+        'id',
+        'nama_tahun_ajaran',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'is_active',
+        'created_at',
+        'updated_at'
+      ],
       order: [["created_at", "DESC"]],
+      // Use distinct to avoid duplicates
+      distinct: true,
     });
+    console.log("TahunAjaran Service Result (Raw):", result); // Debug logging
+    
+    // Log each item to see if there are duplicates
+    result.forEach((item, index) => {
+      console.log(`Item ${index}:`, {
+        id: item.id,
+        nama_tahun_ajaran: item.nama_tahun_ajaran,
+        created_at: item.created_at
+      });
+    });
+    
+    // Deduplicate in JavaScript based on nama_tahun_ajaran as fallback
+    const uniqueResult = result.filter((item, index, self) => 
+      index === self.findIndex(t => t.nama_tahun_ajaran === item.nama_tahun_ajaran)
+    );
+    
+    console.log("TahunAjaran Unique Result:", uniqueResult); // Debug logging
+    return uniqueResult;
   } catch (error) {
     throw new Error("Failed to retrieve Tahun Ajaran: " + error.message);
   }
