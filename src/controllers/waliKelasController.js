@@ -361,15 +361,20 @@ export const updateWalikelas = async (req, res) => {
   const { id } = req.params;
   const { tahunAjaran, guru, kelas } = req.body;
 
+  console.log("Update Walikelas - Request Body:", req.body); // Debug logging
+
   const transaction = await sequelize.transaction();
   try {
     // Update Tahun Ajaran
     if (Array.isArray(tahunAjaran)) {
       for (const item of tahunAjaran) {
+        console.log("Processing Tahun Ajaran:", item); // Debug logging
+        
         const tahunAjaranRecord = await TahunAjaran.findByPk(item.id, {
           transaction,
         });
         if (tahunAjaranRecord) {
+          console.log("Updating existing Tahun Ajaran:", item.id); // Debug logging
           await tahunAjaranRecord.update(
             {
               nama_tahun_ajaran: item.namaTahunAjaran,
@@ -380,6 +385,7 @@ export const updateWalikelas = async (req, res) => {
             { transaction }
           );
         } else {
+          console.log("Creating new Tahun Ajaran"); // Debug logging
           await TahunAjaran.create(
             {
               nama_tahun_ajaran: item.namaTahunAjaran,
@@ -396,16 +402,35 @@ export const updateWalikelas = async (req, res) => {
     // Update Kelas
     if (Array.isArray(kelas)) {
       for (const item of kelas) {
+        console.log("Processing Kelas:", item); // Debug logging
+        
         const kelasRecord = await Kelas.findByPk(item.id, { transaction });
         if (kelasRecord) {
+          console.log("Updating existing Kelas:", item.id); // Debug logging
+          
+          // Cari tahun ajaran yang sesuai untuk mendapatkan ID
+          let tahunAjaranId = item.tahunAjaranId;
+          if (!tahunAjaranId && Array.isArray(tahunAjaran) && tahunAjaran.length > 0) {
+            const tahunAjaranRecord = await TahunAjaran.findOne({
+              where: {
+                nama_tahun_ajaran: tahunAjaran[0].namaTahunAjaran
+              },
+              transaction
+            });
+            tahunAjaranId = tahunAjaranRecord?.id;
+          }
+          
+          console.log("Using tahun_ajaran_id:", tahunAjaranId); // Debug logging
+          
           await kelasRecord.update(
             {
               nama_kelas: item.namaKelas,
-              tahun_ajaran_id: item.tahunAjaranId,
+              tahun_ajaran_id: tahunAjaranId,
             },
             { transaction }
           );
         } else {
+          console.log("Creating new Kelas"); // Debug logging
           await Kelas.create(
             {
               nama_kelas: item.namaKelas,
@@ -420,6 +445,8 @@ export const updateWalikelas = async (req, res) => {
     // Update Guru
     if (Array.isArray(guru)) {
       for (const item of guru) {
+        console.log("Processing Guru:", item); // Debug logging
+        
         const guruRecord = await Guru.findByPk(item.id, { transaction });
         if (guruRecord) {
           const user = await User.findByPk(guruRecord.user_id, { transaction });
@@ -475,12 +502,53 @@ export const updateWalikelas = async (req, res) => {
     }
 
     await transaction.commit();
+    console.log("Update Walikelas - Success"); // Debug logging
+    
+    // Fetch updated data to return in response
+    const updatedKelas = await Kelas.findByPk(id, {
+      include: [
+        {
+          model: TahunAjaran,
+          as: "tahunAjaran",
+          attributes: [
+            "id",
+            "nama_tahun_ajaran",
+            "tanggal_mulai",
+            "tanggal_selesai",
+            "is_active",
+          ],
+        },
+        {
+          model: Guru,
+          as: "guru",
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["email", "password"],
+            },
+          ],
+          attributes: [
+            "id",
+            "nama_guru",
+            "nip",
+            "jenis_kelamin",
+            "alamat",
+            "no_telepon",
+            "kelas_id",
+          ],
+        },
+      ],
+    });
+    
     res.status(200).json({
       success: true,
       message: "Data updated successfully",
+      data: updatedKelas,
     });
   } catch (error) {
     await transaction.rollback();
+    console.error("Update Walikelas - Error:", error); // Debug logging
     res.status(500).json({
       success: false,
       message: error.message || "Failed to update data",
